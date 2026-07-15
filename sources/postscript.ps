@@ -1,0 +1,36 @@
+% 1. Comment
+
+% 2. "Function" = procedure defined in a dictionary
+/factorial {                      % 8. recursion
+    dup 1 le
+    { pop 1 }
+    { dup 1 sub factorial mul }
+    ifelse
+} def
+
+% 3. Variables (def); native arrays and dictionaries
+/n 5 def
+/world (World) def
+/numbers [3 1 4 1 5] def
+/ages << /Alice 30 /Bob 25 >> def
+
+% 4. Output (console)
+(Hello, World) print
+
+% 5. Condition (postfix, procedures as arguments)
+n 3 gt
+{ (big) print }
+{ n 3 eq { (medium) print } { (small) print } ifelse }
+ifelse
+
+% 6. For: forall applies a procedure to each element
+numbers { 2 mul = } forall        % = prints a number
+
+% 7. While: infinite loop + exit
+{ n 0 le { exit } if  /n n 1 sub def } loop
+
+5 factorial =
+
+% 9. Errors: stopped (the ancestor of try)
+{ 10 0 div = } stopped
+{ (cannot divide) print } if

@@ -1,6 +1,6 @@
 # Silicon Rosetta
 
-*One minimal program, nine universal concepts, translated into 27 languages.*
+*One minimal program, nine universal concepts, translated into 36 languages.*
 
 The **Silicon Rosetta** is a "Hello World" extended to cover the core grammar of any programming language. The nine blocks: **comment, function, variables/types, output, condition, for loop, while loop, recursion, error handling**. Translating it into a new language immediately exposes its syntax, its typing discipline, and its philosophy.
 
@@ -1541,6 +1541,420 @@ _start:
 
 ---
 
+## Smalltalk
+
+*Pure object orientation (1972): there are ONLY objects and messages. Even `if` doesn't exist — `ifTrue:` is a message sent to a boolean object, with code blocks as arguments.*
+
+```smalltalk
+"1. Comment (in double quotes!)"
+
+| greet n world numbers ages factorial |
+
+"2. Function: here a block (methods live in classes)"
+greet := [ :name | 'Hello, ', name ].
+
+"3. Variables (declared between | |, untyped)"
+n := 5.
+world := 'World'.
+numbers := #(3 1 4 1 5).
+ages := Dictionary newFrom: { 'Alice' -> 30. 'Bob' -> 25 }.
+
+"4. Output"
+Transcript showln: (greet value: world).
+
+"5. Condition: ifTrue: is a MESSAGE sent to the boolean"
+n > 3
+    ifTrue: [ Transcript showln: 'big' ]
+    ifFalse: [ n = 3
+        ifTrue: [ Transcript showln: 'medium' ]
+        ifFalse: [ Transcript showln: 'small' ] ].
+
+"6. For: a message sent to the collection"
+numbers do: [ :x | Transcript showln: (x * 2) printString ].
+
+"7. While: a message sent to the condition block"
+[ n > 0 ] whileTrue: [ n := n - 1 ].
+
+"8. Recursion (self-referencing block)"
+factorial := nil.
+factorial := [ :k |
+    k <= 1 ifTrue: [ 1 ] ifFalse: [ k * (factorial value: k - 1) ] ].
+Transcript showln: (factorial value: 5) printString.
+
+"9. Errors: messages again"
+[ Transcript showln: (10 / 0) printString ]
+    on: ZeroDivide
+    do: [ :e | Transcript showln: 'cannot divide' ].
+```
+
+---
+
+## Erlang
+
+*Actor-based concurrency and "let it crash": variables are assigned ONCE, there are no loops (recursion is mandatory), and real error handling means letting the process die under a supervisor's watch.*
+
+```erlang
+% 1. Comment
+-module(silicon_rosetta).
+-export([main/0]).
+
+% 2. Function
+greet(Name) -> "Hello, " ++ Name.
+
+% 8. Recursion: THE mechanism (clauses with guards)
+factorial(K) when K =< 1 -> 1;
+factorial(K) -> K * factorial(K - 1).
+
+% 7. "While" is done by recursion
+countdown(0) -> ok;
+countdown(N) -> countdown(N - 1).
+
+main() ->
+    % 3. Variables: SINGLE assignment (N = 6 later would be an error)
+    N = 5,
+    World = "World",
+    Numbers = [3, 1, 4, 1, 5],
+    Ages = #{"Alice" => 30, "Bob" => 25},
+    _ = Ages,
+
+    % 4. Output
+    io:format("~s~n", [greet(World)]),
+
+    % 5. Condition
+    if
+        N > 3   -> io:format("big~n");
+        N =:= 3 -> io:format("medium~n");
+        true    -> io:format("small~n")
+    end,
+
+    % 6. For: apply a function to the list
+    lists:foreach(fun(X) -> io:format("~p~n", [X * 2]) end, Numbers),
+
+    countdown(N),
+    io:format("~p~n", [factorial(5)]),
+
+    % 9. try/catch exists, but the philosophy is
+    %    "let it crash" + process supervision
+    try
+        io:format("~p~n", [10 div 0])
+    catch
+        error:badarith -> io:format("cannot divide~n")
+    end.
+```
+
+---
+
+## APL
+
+*Everything is an array, every operation has its own symbol: the whole program fits in a few dense lines. The for loop is pointless — operations apply to the whole structure at once. Factorial? Already built in: `!5`.*
+
+```apl
+⍝ 1. Comment
+
+⍝ 3. Variables
+n ← 5
+world ← 'World'
+numbers ← 3 1 4 1 5
+
+⍝ 2+4. Function (⍵ = argument) and output
+greet ← {'Hello, ', ⍵}
+⎕ ← greet world
+
+⍝ 5. Condition... by selecting from an array!
+⎕ ← (1+(n=3)+2×n>3) ⊃ 'small' 'medium' 'big'
+
+⍝ 6. "For": pointless — the operation is vectorized
+⎕ ← 2 × numbers        ⍝ doubles the WHOLE list at once
+
+⍝ 7. While (very rare): here via a recursive function
+countdown ← {⍵=0: ⍵ ⋄ ∇ ⍵-1}
+countdown n
+
+⍝ 8. Recursion (∇ = self-reference) — but !5 already exists
+factorial ← {⍵≤1: 1 ⋄ ⍵ × ∇ ⍵-1}
+⎕ ← factorial 5        ⍝ or simply: !5
+
+⍝ 9. Errors: guard inside the function
+⎕ ← {0=⍵: 'cannot divide' ⋄ 10÷⍵} 0
+```
+
+---
+
+## Scheme
+
+*The minimalist academic Lisp. Its decisive contribution: tail recursion is GUARANTEED by the standard — a recursive call in tail position consumes no stack. The while loop is therefore officially superfluous.*
+
+```scheme
+; 1. Comment
+
+; 2. Function
+(define (greet name)
+  (string-append "Hello, " name))
+
+; 3. Variables
+(define n 5)
+(define world "World")
+(define numbers '(3 1 4 1 5))
+(define ages '(("Alice" . 30) ("Bob" . 25)))
+
+; 4. Output
+(display (greet world)) (newline)
+
+; 5. Condition
+(cond ((> n 3) (display "big"))
+      ((= n 3) (display "medium"))
+      (else    (display "small")))
+(newline)
+
+; 6. For
+(for-each (lambda (x) (display (* x 2)) (newline)) numbers)
+
+; 7. "While": named loop in TAIL recursion
+;    (guaranteed not to grow the stack: it IS a loop)
+(let countdown ((k n))
+  (unless (= k 0)
+    (countdown (- k 1))))
+
+; 8. Recursion
+(define (factorial k)
+  (if (<= k 1) 1 (* k (factorial (- k 1)))))
+(display (factorial 5)) (newline)
+
+; 9. Errors (R7RS)
+(display
+  (guard (e (#t "cannot divide"))
+    (/ 10 0)))
+(newline)
+```
+
+---
+
+## AWK
+
+*The inverted model: an AWK program is a list of "pattern { action }" rules applied automatically to EVERY line of the input file. The main loop is implicit — you never write it.*
+
+```awk
+# 2. Function
+function greet(name) { return "Hello, " name }
+
+# 8. Recursion
+function factorial(k) {
+    if (k <= 1) return 1
+    return k * factorial(k - 1)
+}
+
+BEGIN {
+    # 3. Variables (never declared; native associative arrays)
+    n = 5
+    world = "World"
+    split("3 1 4 1 5", numbers, " ")
+    ages["Alice"] = 30
+    ages["Bob"] = 25
+
+    # 4. Output
+    print greet(world)
+
+    # 5. Condition
+    if (n > 3)       print "big"
+    else if (n == 3) print "medium"
+    else             print "small"
+
+    # 6. For
+    for (i = 1; i <= 5; i++) print numbers[i] * 2
+
+    # 7. While
+    while (n > 0) n = n - 1
+
+    print factorial(5)
+
+    # 9. Manual check (10/0 = fatal error)
+    d = 0
+    if (d == 0) print "cannot divide"
+}
+
+# AWK's true nature: one rule per input line —
+# the loop is written nowhere:
+# $1 > 100 { print "large value:", $0 }
+```
+
+---
+
+## ALGOL 60
+
+*The common ancestor (1960): this is where `begin/end` blocks, type declarations, lexical scope and permitted recursion are born — everything C, Pascal and Java would inherit. The missing link between Fortran/COBOL and the 1970s.*
+
+```algol60
+begin
+    comment 1. Comment ;
+
+    integer n;
+    integer i;
+    integer array numbers[1:5];
+
+    comment 8. Recursion : ALGOL 60 is the first major
+            language to explicitly allow it ;
+    integer procedure factorial(k); value k; integer k;
+    factorial := if k <= 1 then 1 else k * factorial(k - 1);
+
+    n := 5;
+    numbers[1] := 3; numbers[2] := 1; numbers[3] := 4;
+    numbers[4] := 1; numbers[5] := 5;
+
+    comment 4. Output (I/O depended on the compiler) ;
+    outstring(1, "Hello, World");
+
+    comment 5. Condition — and the if-expression already exists ;
+    if n > 3 then outstring(1, "big")
+    else if n = 3 then outstring(1, "medium")
+    else outstring(1, "small");
+
+    comment 6. For ;
+    for i := 1 step 1 until 5 do
+        outinteger(1, numbers[i] * 2);
+
+    comment 7. While (a variant of for) ;
+    for i := 0 while n > 0 do n := n - 1;
+
+    outinteger(1, factorial(5));
+
+    comment 9. No error handling : manual checks ;
+end
+```
+
+---
+
+## PostScript
+
+*Every page printed in the 1990s was a program: PostScript is a full stack-based, postfix language — like Forth — that your printer executed.*
+
+```postscript
+% 1. Comment
+
+% 2. "Function" = procedure defined in a dictionary
+/factorial {                      % 8. recursion
+    dup 1 le
+    { pop 1 }
+    { dup 1 sub factorial mul }
+    ifelse
+} def
+
+% 3. Variables (def); native arrays and dictionaries
+/n 5 def
+/world (World) def
+/numbers [3 1 4 1 5] def
+/ages << /Alice 30 /Bob 25 >> def
+
+% 4. Output (console)
+(Hello, World) print
+
+% 5. Condition (postfix, procedures as arguments)
+n 3 gt
+{ (big) print }
+{ n 3 eq { (medium) print } { (small) print } ifelse }
+ifelse
+
+% 6. For: forall applies a procedure to each element
+numbers { 2 mul = } forall        % = prints a number
+
+% 7. While: infinite loop + exit
+{ n 0 le { exit } if  /n n 1 sub def } loop
+
+5 factorial =
+
+% 9. Errors: stopped (the ancestor of try)
+{ 10 0 div = } stopped
+{ (cannot divide) print } if
+```
+
+---
+
+## Verilog
+
+*The great reversal: Verilog does not describe a computation but an electronic CIRCUIT. Outside simulation blocks, everything "runs" in parallel — the very notion of sequence disappears.*
+
+```verilog
+// This describes hardware: the initial block is sequential
+// (simulation), but a real design is massively parallel.
+
+module silicon_rosetta;
+
+  // 3. Variables = registers and wires
+  integer n, i, d;
+  integer numbers [0:4];
+
+  // 2. "Function" (synthesizable as combinational logic)
+  function integer double(input integer x);
+    double = x * 2;
+  endfunction
+
+  // 8. Recursion: possible in simulation (automatic)
+  function automatic integer factorial(input integer k);
+    if (k <= 1) factorial = 1;
+    else factorial = k * factorial(k - 1);
+  endfunction
+
+  initial begin
+    n = 5;
+    numbers[0]=3; numbers[1]=1; numbers[2]=4;
+    numbers[3]=1; numbers[4]=5;
+
+    // 4. Output (simulation)
+    $display("Hello, World");
+
+    // 5. Condition
+    if (n > 3) $display("big");
+    else if (n == 3) $display("medium");
+    else $display("small");
+
+    // 6. For
+    for (i = 0; i < 5; i = i + 1)
+      $display("%0d", double(numbers[i]));
+
+    // 7. While
+    while (n > 0) n = n - 1;
+
+    $display("%0d", factorial(5));
+
+    // 9. No exceptions: dividing by zero yields
+    //    'x (unknown value), to be detected yourself
+    d = 0;
+    if (d == 0) $display("cannot divide");
+  end
+
+endmodule
+```
+
+---
+
+## Rockstar
+
+*The closing wink: Rockstar (2018) is a real, Turing-complete language whose programs read like 1980s power-ballad lyrics. "Shout" prints, "Knock down" decrements. It closes the loop of this document: programming in (almost) natural language already exists — syntax indicative, check against an interpreter.*
+
+```rockstar
+(A Rockstar program is a song)
+
+Shout "Hello, World!"
+
+My count is 5
+
+If my count is greater than 3
+Shout "big"
+
+While my count is greater than nothing
+Knock my count down
+
+Factorial takes a number
+If a number is less than 2
+Give back 1
+
+Put a number minus 1 into the rest
+Give back a number times Factorial taking the rest
+
+Shout Factorial taking 5
+```
+
+---
+
 ## Comparative reading grid
 
 | Language | Blocks | Typing | Native dict | Errors | What it reveals |
@@ -1572,3 +1986,12 @@ _start:
 | SQL | queries | table schema | tables | `NULLIF`/`NULL` | no loops: set thinking |
 | COBOL | `DIVISION` | `PIC` pictures | no | `ON SIZE ERROR` | administrative English (1959) |
 | Assembly | labels | none | no | interrupts | only jumps exist |
+| Smalltalk | blocks `[ ]` | dynamic | `Dictionary` | `on:do:` messages | even the if is a message |
+| Erlang | clauses `;` `.` | dynamic | map `#{}` | "let it crash" | single assignment, mandatory recursion |
+| APL | symbols | arrays | no | guards | everything is an array: `!5` is enough |
+| Scheme | `( )` | dynamic | alist | `guard` | guaranteed tail recursion |
+| AWK | pattern `{ }` | dynamic | assoc. arrays | manual check | the main loop is implicit |
+| ALGOL 60 | `begin/end` | static | no | none | the common ancestor (1960) |
+| PostScript | procs `{ }` | dynamic | `<< >>` | `stopped` | every printed page was a program |
+| Verilog | `module` | bits/integers | no | `x` value | describes a circuit: all parallel |
+| Rockstar | verses | dynamic | no | none | the code is a song |

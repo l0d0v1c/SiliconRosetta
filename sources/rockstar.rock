@@ -1,0 +1,20 @@
+(A Rockstar program is a song)
+
+Shout "Hello, World!"
+
+My count is 5
+
+If my count is greater than 3
+Shout "big"
+
+While my count is greater than nothing
+Knock my count down
+
+Factorial takes a number
+If a number is less than 2
+Give back 1
+
+Put a number minus 1 into the rest
+Give back a number times Factorial taking the rest
+
+Shout Factorial taking 5
