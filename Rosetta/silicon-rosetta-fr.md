@@ -1362,7 +1362,7 @@ main :-
 
 ## SQL
 
-*Déclaratif pur : on décrit le résultat voulu, jamais le chemin. La boucle for n'existe pas — on pense par ensembles. Et pourtant SQL est Turing-complet grâce aux CTE récursives.*
+*Déclaratif par défaut : on décrit le résultat voulu, jamais le chemin. Le langage de requête lui-même n'a pas de boucle for — on pense par ensembles ; les dialectes procéduraux (T-SQL, PL/pgSQL) ajoutent WHILE et curseurs. Et pourtant le SQL pur est Turing-complet grâce aux CTE récursives.*
 
 ```sql
 -- 1. Commentaire
@@ -1384,7 +1384,7 @@ SELECT CASE
          ELSE 'petit'
        END AS taille;
 
--- 6. "Boucle for" : INEXISTANTE — opération sur l'ensemble
+-- 6. "Boucle for" : absente du langage de requête — opération sur l'ensemble
 SELECT x * 2 AS double FROM nombres;
 
 -- 7+8. While et récursivité : la CTE récursive
@@ -1982,7 +1982,7 @@ Shout Factorial taking 5
 | C# | `{ }` | statique inféré | `Dictionary` | exceptions | `10/0` littéral refusé à la compilation |
 | OCaml | `let/in` | statique inféré | listes assoc. | `option` + `match` | `rec` explicite, immuable par défaut |
 | Prolog | règles `:-` | dynamique | faits | `catch/throw` | pas de séquence : logique et backtracking |
-| SQL | requêtes | schéma de tables | tables | `NULLIF`/`NULL` | pas de boucle : pensée ensembliste |
+| SQL | requêtes | schéma de tables | tables | `NULLIF`/`NULL` | déclaratif par défaut : pensée ensembliste |
 | COBOL | `DIVISION` | images `PIC` | non | `ON SIZE ERROR` | l'anglais administratif (1959) |
 | Assembleur | étiquettes | aucun | non | interruptions | il n'existe que des sauts |
 | Smalltalk | blocs `[ ]` | dynamique | `Dictionary` | messages `on:do:` | même le if est un message |

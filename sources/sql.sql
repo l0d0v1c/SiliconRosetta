@@ -17,7 +17,7 @@ SELECT CASE
          ELSE 'small'
        END AS size;
 
--- 6. "For loop": NONEXISTENT — one operation on the whole set
+-- 6. "For loop": none in the query language — one operation on the whole set
 SELECT x * 2 AS double FROM numbers;
 
 -- 7+8. While and recursion: the recursive CTE

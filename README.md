@@ -1363,7 +1363,7 @@ main :-
 
 ## SQL
 
-*Purely declarative: you describe the result, never the path. The for loop does not exist — you think in sets. And yet SQL is Turing-complete thanks to recursive CTEs.*
+*Declarative by default: you describe the result, never the path. The query language itself has no for loop — you think in sets; procedural dialects (T-SQL, PL/pgSQL) do add WHILE and cursors. And yet pure SQL is Turing-complete thanks to recursive CTEs.*
 
 ```sql
 -- 1. Comment
@@ -1385,7 +1385,7 @@ SELECT CASE
          ELSE 'small'
        END AS size;
 
--- 6. "For loop": NONEXISTENT — one operation on the whole set
+-- 6. "For loop": none in the query language — one operation on the whole set
 SELECT x * 2 AS double FROM numbers;
 
 -- 7+8. While and recursion: the recursive CTE
@@ -1983,7 +1983,7 @@ Shout Factorial taking 5
 | C# | `{ }` | static, inferred | `Dictionary` | exceptions | literal `10/0` rejected at compile time |
 | OCaml | `let/in` | static, inferred | assoc. lists | `option` + `match` | explicit `rec`, immutable by default |
 | Prolog | rules `:-` | dynamic | facts | `catch/throw` | no sequence: logic and backtracking |
-| SQL | queries | table schema | tables | `NULLIF`/`NULL` | no loops: set thinking |
+| SQL | queries | table schema | tables | `NULLIF`/`NULL` | declarative by default: set thinking |
 | COBOL | `DIVISION` | `PIC` pictures | no | `ON SIZE ERROR` | administrative English (1959) |
 | Assembly | labels | none | no | interrupts | only jumps exist |
 | Smalltalk | blocks `[ ]` | dynamic | `Dictionary` | `on:do:` messages | even the if is a message |
